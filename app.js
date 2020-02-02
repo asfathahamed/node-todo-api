@@ -10,10 +10,6 @@ var passport = require('passport');
 
 var bodyParser = require('body-parser')
 
-var auth = require('./routes/auth');
-// var category =  require('./routes/category');
-// var post =  require('./routes/post');
-
 /** DB Code - Start */
 var mongoose = require('mongoose');
 
@@ -27,28 +23,6 @@ mongoose.connect('mongodb://localhost:27017/TodoData', {
 .catch(err => console.error(err));
 /** DB Code - End */
 
-// var MongoClient = require('mongodb').MongoClient;
-
-// MongoClient.connect("mongodb://localhost:27017", function(err, db) {
-//     if (err) throw err;
-//     dbObj = db.db('TodoData');
-//     dbObj.createCollection('TodoList', function(err, collection) {
-//         if (err) throw err;
-//         console.log('Collection Created');
-        
-//         collection.insertOne({
-//             id: 1,
-//             task: 'My First Task'
-//         }, function(err, res) {
-//             if (err) throw err;
-//             console.log('Inserted')
-//         });
-//         collection.find({}).toArray(function(err, res) {
-//             if (err) throw err;
-//             console.log('result', res);
-//         })
-//     });
-// });
 
 var app = express();
 
@@ -59,9 +33,25 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 app.use(passport.initialize());
 
-app.use('/api/auth', auth);
-// app.use('/api/category', category);
-// app.use('/api/post', post);
+// app.use('/api/auth', auth);
+
+var Kitten = require('./models/Kitty');
+
+// Kitten - Silence
+var silence = new Kitten({name: 'Silence'});
+console.log(silence.name);
+
+// Kitten - Fluffy
+var fluffy = new Kitten({name: 'fluffy'});
+fluffy.save(function(err, fluffy) {
+  if (err) return console.log(err);
+  fluffy.speak();
+});
+
+Kitten.find(function(err, kittens) {
+  if (err) return console.log(err);
+  console.log(kittens.map(kitty => kitty.name));
+});
 
 app.use(logger('dev'));
 app.use(express.json());
